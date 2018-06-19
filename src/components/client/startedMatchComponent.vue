@@ -23,12 +23,12 @@
         <div class="score">
           <span class="number">
             {{ score1 }}
-            <i v-if="bet.match.hostScore > -1">({{ bet.match.hostScore }})</i>
+            <i v-if="bet && bet.match.hostScore > -1">({{ bet.match.hostScore }})</i>
           </span>
           <span>:</span>
           <span class="number">
             {{ score2 }}
-            <i v-if="bet.match.guestScore > -1">({{ bet.match.guestScore }})</i>
+            <i v-if="bet && bet.match.guestScore > -1">({{ bet.match.guestScore }})</i>
           </span>
         </div>
         <div class="button">
@@ -53,7 +53,7 @@
               <el-tag size="mini" type="primary" v-if="bet.points === 1">Winner</el-tag>
             </span>
             <span class="content">{{ bet.hostScore + ' - ' + bet.guestScore }}</span>
-            <span class="content">{{ bet.points || 0 }}</span>
+            <span class="content">{{ bet.points || '-' }}</span>
           </p>
         </div>
       </div>

@@ -5,22 +5,17 @@
       border
       style="width: 100%"
       height="600"
-      :row-class-name="tableRowClassName">
+      highlight-current-row: false
+      :row-class-name="tableRowClassName"
+      @cell-click="showBingoList">
       <el-table-column
-        type="index"
         label="排名"
+        prop="naturalRank"
         width="50">
       </el-table-column>
       <el-table-column
         prop="player.name"
         label="姓名">
-      </el-table-column>
-      <el-table-column
-        prop="winnerCount"
-        label="Winner">
-        <template slot-scope="scope">
-          <span>{{scope.row.winnerCount || 0}}</span>
-        </template>
       </el-table-column>
       <el-table-column
         prop="bingoCount"
@@ -30,6 +25,36 @@
         </template>
       </el-table-column>
       <el-table-column
+        prop="winnerCount"
+        label="Winner">
+        <template slot-scope="scope">
+          <span>{{scope.row.winnerCount || 0}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="betCount"
+        label="场次">
+      </el-table-column>
+      <el-table-column
+        label="Bingo率">
+        <template slot-scope="scope">
+          <span>{{formatRate(scope.row.bingoRate * 100) || 0}}%</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="Winner率">
+        <template slot-scope="scope">
+          <span>{{formatRate(scope.row.winnerRate * 100) || 0}}%</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="胜率">
+        <template slot-scope="scope">
+          <span>{{formatRate((scope.row.winnerRate * 100 || 0) + (scope.row.bingoRate * 100 || 0))}}%</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        fixed="right"
         prop="totalPoints"
         label="得分">
         <template slot-scope="scope">
@@ -45,9 +70,9 @@
 </template>
 
 <script>
-import rankingService from '@/assets/js/rankingService'
 import matchbetStatisticeService from '@/assets/js/matchbetStatisticeService'
 import statisticsService from '@/assets/js/statisticsService'
+import matchbetService from '@/assets/js/matchbetService'
 import dateTimeUtil from '@/assets/js/dateTimeUtil'
 export default {
   name: 'Ranking',
@@ -58,17 +83,15 @@ export default {
     }
   },
   methods: {
-    getAllRankingList () {
-      rankingService.getRankingList().then(res => {
-        this.rankingList = res
-      })
+    formatRate (rate) {
+      return +rate.toFixed(2)
     },
     tableRowClassName (row) {
-      if (row.rowIndex === 0) {
+      if (row.row.naturalRank === 1) {
         return 'golden-row'
-      } else if (row.rowIndex === 1) {
+      } else if (row.row.naturalRank === 2) {
         return 'silver-row'
-      } else if (row.rowIndex === 2) {
+      } else if (row.row.naturalRank === 3) {
         return 'copper-row'
       }
       return ''
@@ -85,6 +108,14 @@ export default {
       statisticsService.getRankingListStatistics().then(res => {
         this.rankingList = res
       })
+    },
+    getBingoBetList (playerId) {
+      matchbetService.getBingoBetList(playerId).then(res => {
+        // console.log(res)
+      })
+    },
+    showBingoList (row, event, column) {
+      this.getBingoBetList(row.player.id)
     }
   },
   created () {

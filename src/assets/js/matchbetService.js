@@ -36,9 +36,35 @@ function getListMatchBets (matchId) {
   })
 }
 
+function getBingoBetList (playerId) {
+  const queryParams = {
+    type: 'list-player-history-bingo-bets',
+    params: {
+      playerId: playerId
+    }
+  }
+  return axiosService.getAll(URL, queryParams).then(res => {
+    return res.data
+  })
+}
+
+function getWinnerBetsList (playerId) {
+  const queryParams = {
+    type: 'list-player-history-winner-bets',
+    params: {
+      playerId: playerId
+    }
+  }
+  return axiosService.getAll(URL, queryParams).then(res => {
+    return res.data
+  })
+}
+
 export default {
   createMatchScore,
   updateMatchScore,
   getListMatchBets,
-  getMyListBets
+  getMyListBets,
+  getBingoBetList,
+  getWinnerBetsList
 }

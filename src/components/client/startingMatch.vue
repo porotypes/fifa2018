@@ -29,6 +29,7 @@ export default {
     getStartingMatches () {
       matchService.getStartingMatches().then(matches => {
         this.allMatches = matches
+        this.getMyListBets()
       })
     },
     getMyListBets () {
@@ -38,10 +39,9 @@ export default {
     }
   },
   mounted () {
-    this.getStartingMatches()
   },
   created () {
-    this.getMyListBets()
+    this.getStartingMatches()
   }
 }
 </script>

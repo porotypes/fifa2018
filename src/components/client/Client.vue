@@ -50,6 +50,7 @@ export default {
   bottom: 0;
   left: 0;
   right: 0;
+  z-index: 999;
   width: 100%;
 }
 </style>
