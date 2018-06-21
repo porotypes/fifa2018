@@ -48,9 +48,21 @@ function getBingoBetList (playerId) {
   })
 }
 
-function getWinnerBetsList (playerId) {
+function getWinnerBetList (playerId) {
   const queryParams = {
     type: 'list-player-history-winner-bets',
+    params: {
+      playerId: playerId
+    }
+  }
+  return axiosService.getAll(URL, queryParams).then(res => {
+    return res.data
+  })
+}
+
+function getHistoryBetList (playerId) {
+  const queryParams = {
+    type: 'list-player-history-bets',
     params: {
       playerId: playerId
     }
@@ -66,5 +78,6 @@ export default {
   getListMatchBets,
   getMyListBets,
   getBingoBetList,
-  getWinnerBetsList
+  getWinnerBetList,
+  getHistoryBetList
 }

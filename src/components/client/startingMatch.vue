@@ -11,6 +11,7 @@
 </template>
 
 <script>
+import { Toast } from 'vant'
 import matchService from '@/assets/js/matchService'
 import matchbetService from '@/assets/js/matchbetService'
 import StartedMatchComponent from '@/components/client/StartedMatchComponent'
@@ -27,9 +28,14 @@ export default {
   },
   methods: {
     getStartingMatches () {
+      Toast.loading({
+        mask: true,
+        message: '加载中...'
+      })
       matchService.getStartingMatches().then(matches => {
         this.allMatches = matches
         this.getMyListBets()
+        Toast.clear()
       })
     },
     getMyListBets () {
@@ -37,8 +43,6 @@ export default {
         this.myBetList = bets
       })
     }
-  },
-  mounted () {
   },
   created () {
     this.getStartingMatches()

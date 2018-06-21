@@ -7,6 +7,7 @@
 </template>
 
 <script>
+import { Toast } from 'vant'
 import loginService from '@/assets/js/login'
 export default {
   name: 'Login',
@@ -17,7 +18,12 @@ export default {
   },
   methods: {
     login () {
+      Toast.loading({
+        mask: true,
+        message: '登陆中...'
+      })
       loginService.login().then(url => {
+        Toast.clear()
         window.location.href = url
       })
     },

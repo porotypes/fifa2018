@@ -18,6 +18,10 @@ export default {
 }
 html {
   font-size: 62.5%;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  -ms-overflow-style: scrollbar;
+  -webkit-tap-highlight-color: transparent;
 }
 body {
   background: #e1e1e1;

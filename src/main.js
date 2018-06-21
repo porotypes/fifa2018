@@ -7,7 +7,6 @@ import axios from 'axios'
 import router from './router'
 import Vant from 'vant'
 import ElementUI from 'element-ui'
-import VueJWT from 'vuejs-jwt'
 
 import 'element-ui/lib/theme-chalk/index.css'
 import 'vant/lib/vant-css/index.css'
@@ -17,7 +16,6 @@ Vue.config.productionTip = false
 Vue.use(Vant, axios)
 Vue.use(ElementUI)
 Vue.use(vueResource)
-Vue.use(VueJWT)
 
 /* eslint-disable no-new */
 new Vue({
