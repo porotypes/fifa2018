@@ -35,12 +35,12 @@ export default {
       matchService.getStartingMatches().then(matches => {
         this.allMatches = matches
         this.getMyListBets()
-        Toast.clear()
       })
     },
     getMyListBets () {
       matchbetService.getMyListBets().then(bets => {
         this.myBetList = bets
+        Toast.clear()
       })
     }
   },

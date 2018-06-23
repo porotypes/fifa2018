@@ -34,9 +34,24 @@ function isbetalready (match) {
   })
 }
 
+function entryMatch (data) {
+  return axiosService.post(URL, data).then(res => {
+    return res.data
+  })
+}
+
+function saveMatchScore (matchId, data) {
+  let url = URL + '/' + matchId
+  return axios.patch(url, data).then(res => {
+    return res
+  })
+}
+
 export default {
   getMatches,
   getStartingMatches,
   getOneMatch,
-  isbetalready
+  isbetalready,
+  entryMatch,
+  saveMatchScore
 }

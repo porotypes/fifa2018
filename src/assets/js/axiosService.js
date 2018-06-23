@@ -3,7 +3,8 @@ import { Toast } from 'vant'
 
 let USER_TOKEN = localStorage.getItem('USER_TOKEN')
 
-axios.defaults.baseURL = 'http://api.fifa2018.suancloud.cn/'
+// axios.defaults.baseURL = 'http://api.fifa2018.suancloud.cn/'
+axios.defaults.baseURL = 'http://api.test.fifa2018.suancloud.cn/'
 axios.defaults.headers.common['Authorization'] = 'Bearer ' + USER_TOKEN
 
 // methods
@@ -38,11 +39,12 @@ function update (url, queryParams) {
 }
 
 function patch (url, data, queryParams = undefined) {
-  let URL = url
+  let URL = url + (data.id ? '/' + data.id : '')
   if (!queryParams) {
     return axios({
       method: 'patch',
-      url: URL
+      url: URL,
+      data: data
     })
       .then(response => response.data)
       .catch(error => handleError(error))

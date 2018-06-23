@@ -79,7 +79,7 @@
     <van-popup v-model="show" position="left" :overlay="false">
       <section class="history-wrap">
         <section class="history-header">
-          <span>{{ player.name }}</span>
+          <span>{{ player.name }}的得分场次</span>
           <button @click="show = false">关闭</button>
         </section>
         <section class="history-main">
@@ -240,7 +240,7 @@ export default {
 }
 .history-header span {
   float: left;
-  width: 5rem;
+  width: 10rem;
   height: 30px;
   line-height: 30px;
 }

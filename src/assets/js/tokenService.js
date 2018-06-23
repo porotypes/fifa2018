@@ -16,7 +16,14 @@ function isOverdue () {
   return currentTime > tokenTime * 1000
 }
 
+// 判断是否为管理员
+function isManager () {
+  let userInfo = decodeToken()
+  return userInfo.roles.some(role => role === 'ROLE_ADMIN')
+}
+
 export default {
   decodeToken,
-  isOverdue
+  isOverdue,
+  isManager
 }

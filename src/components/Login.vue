@@ -23,8 +23,8 @@ export default {
         message: '登陆中...'
       })
       loginService.login().then(url => {
-        Toast.clear()
         window.location.href = url
+        Toast.clear()
       })
     },
     setToken (url) {

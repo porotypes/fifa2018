@@ -33,7 +33,15 @@
         </div>
         <div class="button">
           <small style="color: red;text-align: left">括号中的比分为比赛最终得分</small>
-          <van-button type="primary" size="large" @click="showPopup()">竞猜比分</van-button>
+          <van-row v-if="isManager">
+            <van-col span="12">
+              <van-button size="large" type="primary">竞猜比分</van-button>
+            </van-col>
+            <van-col span="12">
+              <van-button bottom-action @click="showMatchSroce()">录入比分</van-button>
+            </van-col>
+          </van-row>
+          <van-button v-if="!isManager" type="primary" size="large" @click="showPopup()">竞猜比分</van-button>
         </div>
       </div>
     </div>
@@ -58,12 +66,20 @@
         </div>
       </div>
     </van-popup>
+
+    <van-dialog v-model="isShowMatchScore" @confirm="saveMatchScore()">
+      <van-field label="主队比分" v-model="hostTeamScore"/>
+      <van-field label="客队比分" v-model="guestTeamScore"/>
+    </van-dialog>
   </div>
 </template>
 
 <script>
 import dateTimeUtil from '@/assets/js/dateTimeUtil'
+import matchService from '@/assets/js/matchService'
 import matchbetService from '@/assets/js/matchbetService'
+import updateRankingService from '@/assets/js/updateRankingService'
+import tokenService from '@/assets/js/tokenService'
 export default {
   name: 'startedMatchComponent',
   props: ['myBetList', 'match'],
@@ -74,7 +90,11 @@ export default {
       score2: '-',
       show: false,
       scores: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
-      betsList: []
+      betsList: [],
+      isManager: tokenService.isManager(),
+      isShowMatchScore: false,
+      hostTeamScore: null,
+      guestTeamScore: null
     }
   },
   watch: {
@@ -102,6 +122,19 @@ export default {
           this.score1 = bet.hostScore
           this.score2 = bet.guestScore
         }
+      })
+    },
+    showMatchSroce (match) {
+      this.isShowMatchScore = true
+    },
+    saveMatchScore () {
+      let match = {
+        hostScore: this.hostTeamScore,
+        guestScore: this.guestTeamScore
+      }
+      matchService.saveMatchScore(this.match.id, match).then(res => {
+        this.$emit('save')
+        updateRankingService.updateRanking().then()
       })
     }
   }

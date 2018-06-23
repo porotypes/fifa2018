@@ -19,6 +19,7 @@
 </template>
 
 <script>
+import { Toast } from 'vant'
 import matchService from '@/assets/js/matchService'
 import matchbetService from '@/assets/js/matchbetService'
 import BetComponent from '@/components/client/BetComponent'
@@ -36,6 +37,10 @@ export default {
   },
   methods: {
     getMatches () {
+      Toast.loading({
+        mask: true,
+        message: '加载中...'
+      })
       matchService.getMatches().then(res => {
         this.allMatches = res
       })
@@ -43,6 +48,7 @@ export default {
     getMyListBets () {
       matchbetService.getMyListBets().then(bets => {
         this.myBetList = bets
+        Toast.clear()
       })
     }
   },
