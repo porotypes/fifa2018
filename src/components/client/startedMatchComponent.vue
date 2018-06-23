@@ -35,7 +35,7 @@
           <small style="color: red;text-align: left">括号中的比分为比赛最终得分</small>
           <van-row v-if="isManager">
             <van-col span="12">
-              <van-button size="large" type="primary">竞猜比分</van-button>
+              <van-button size="large" type="primary" @click="showPopup()">竞猜比分</van-button>
             </van-col>
             <van-col span="12">
               <van-button bottom-action @click="showMatchSroce()">录入比分</van-button>
