@@ -18,12 +18,12 @@
       <div class="score">
         <span class="number">
           {{ bet.hostScore }}
-          <i v-if="bet.match.hostScore">({{ bet.match.hostScore }})</i>
+          <i v-if="bet.match.hostScore > -1">({{ bet.match.hostScore }})</i>
         </span>
         <span>:</span>
         <span class="number">
           {{ bet.guestScore }}
-          <i v-if="bet.match.guestScore">({{ bet.match.guestScore }})</i>
+          <i v-if="bet.match.guestScore > -1">({{ bet.match.guestScore }})</i>
         </span>
       </div>
     </div>

@@ -1,6 +1,6 @@
 <template>
   <section>
-    <van-button type="primary" size="large" @click="showDialog()">添加比赛</van-button>
+    <van-button type="primary" size="large" @click="showDialog()">{{ buttonTitle }}</van-button>
 
     <van-dialog
       v-model="isShowDialog"
@@ -72,6 +72,12 @@ import dateTimeUtil from '@/assets/js/dateTimeUtil'
 import handlePickerData from '@/assets/js/handlePickerData'
 export default {
   name: 'EntryMatchComponent',
+  props: {
+    buttonTitle: {
+      type: String,
+      default: '添加比赛'
+    }
+  },
   data () {
     return {
       matchTypes: [],

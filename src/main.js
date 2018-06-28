@@ -6,7 +6,7 @@ import App from './App'
 import axios from 'axios'
 import router from './router'
 import Vant from 'vant'
-import ElementUI from 'element-ui'
+import { Table, Tag, TableColumn } from 'element-ui'
 
 import 'element-ui/lib/theme-chalk/index.css'
 import 'vant/lib/vant-css/index.css'
@@ -14,7 +14,9 @@ import 'vant/lib/vant-css/index.css'
 Vue.config.productionTip = false
 
 Vue.use(Vant, axios)
-Vue.use(ElementUI)
+Vue.use(Table)
+Vue.use(TableColumn)
+Vue.use(Tag)
 Vue.use(vueResource)
 
 /* eslint-disable no-new */

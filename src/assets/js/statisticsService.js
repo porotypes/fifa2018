@@ -11,6 +11,20 @@ function getRankingListStatistics () {
   })
 }
 
+function getMatchStatistics (startTime, endTime) {
+  const queryParams = {
+    type: 'match-bet-result-trend-list',
+    params: {
+      statsAfter: startTime,
+      statsBefore: endTime
+    }
+  }
+  return axiosService.getAll(url, queryParams).then(res => {
+    return res.data
+  })
+}
+
 export default {
-  getRankingListStatistics
+  getRankingListStatistics,
+  getMatchStatistics
 }

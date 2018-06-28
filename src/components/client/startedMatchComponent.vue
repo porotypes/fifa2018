@@ -38,7 +38,7 @@
               <van-button size="large" type="primary" @click="showPopup()">竞猜比分</van-button>
             </van-col>
             <van-col span="12">
-              <van-button bottom-action @click="showMatchSroce()">录入比分</van-button>
+              <van-button bottom-action @click="showMatchSroce(bet)">录入比分</van-button>
             </van-col>
           </van-row>
           <van-button v-if="!isManager" type="primary" size="large" @click="showPopup()">竞猜比分</van-button>
@@ -67,9 +67,9 @@
       </div>
     </van-popup>
 
-    <van-dialog v-model="isShowMatchScore" @confirm="saveMatchScore()">
-      <van-field label="主队比分" v-model="hostTeamScore"/>
-      <van-field label="客队比分" v-model="guestTeamScore"/>
+    <van-dialog v-model="isShowMatchScore" show-cancel-button @confirm="saveMatchScore()">
+      <van-field type="number" label="主队比分" v-model="hostTeamScore"/>
+      <van-field type="number" label="客队比分" v-model="guestTeamScore"/>
     </van-dialog>
   </div>
 </template>
@@ -78,8 +78,8 @@
 import dateTimeUtil from '@/assets/js/dateTimeUtil'
 import matchService from '@/assets/js/matchService'
 import matchbetService from '@/assets/js/matchbetService'
-import updateRankingService from '@/assets/js/updateRankingService'
 import tokenService from '@/assets/js/tokenService'
+import { Toast } from 'vant'
 export default {
   name: 'startedMatchComponent',
   props: ['myBetList', 'match'],
@@ -124,17 +124,25 @@ export default {
         }
       })
     },
-    showMatchSroce (match) {
+    showMatchSroce (bet) {
       this.isShowMatchScore = true
+      if (bet) {
+        this.hostTeamScore = bet.match.hostScore
+        this.guestTeamScore = bet.match.guestScore
+      }
     },
     saveMatchScore () {
+      if (!this.hostTeamScore || !this.guestTeamScore) {
+        Toast.fail('请输入比分')
+        return
+      }
       let match = {
         hostScore: this.hostTeamScore,
         guestScore: this.guestTeamScore
       }
       matchService.saveMatchScore(this.match.id, match).then(res => {
         this.$emit('save')
-        updateRankingService.updateRanking().then()
+        Toast.success('保存成功')
       })
     }
   }

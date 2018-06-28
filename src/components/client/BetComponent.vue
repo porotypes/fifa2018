@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <section>
     <div class="match">
       <h4 class="title">{{ transferTime(match.startTime) }}</h4>
       <p class="match-type">{{ match.type.name }}</p>
@@ -21,11 +21,24 @@
           <span>:</span>
           <span class="number">{{ score2 }}</span>
         </div>
-        <div class="button">
+        <div class="button" v-if="!isManager">
           <van-button type="primary" size="large" @click="showPopup()">
             <span v-if="!bet">竞猜</span>
             <span v-else-if="bet">修改比分</span>
           </van-button>
+        </div>
+        <div class="button" v-if="isManager">
+          <van-row>
+            <van-col span="12">
+              <van-button size="large" type="primary" @click="showPopup()">
+                <span v-if="!bet">竞猜</span>
+                <span v-else-if="bet">修改比分</span>
+              </van-button>
+            </van-col>
+            <van-col span="12">
+              <entryMatchComponent :buttonTitle="'修改比赛'"></entryMatchComponent>
+            </van-col>
+          </van-row>
         </div>
       </div>
     </div>
@@ -44,15 +57,20 @@
         </div>
       </div>
     </van-popup>
-  </div>
+  </section>
 </template>
 
 <script>
 import dateTimeUtil from '@/assets/js/dateTimeUtil'
 import matchbetService from '@/assets/js/matchbetService'
+import tokenService from '@/assets/js/tokenService'
 import { Toast } from 'vant'
+import EntryMatchComponent from './EntryMatchComponent'
 export default {
   name: 'BetComponent',
+  components: {
+    'entryMatchComponent': EntryMatchComponent
+  },
   props: ['myBetList', 'match'],
   data () {
     return {
@@ -63,7 +81,9 @@ export default {
       selectedScore2: 0,
       show: false,
       scores: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
-      isSaving: false
+      isSaving: false,
+      isManager: tokenService.isManager(),
+      isShowMatchModel: false
     }
   },
   watch: {
@@ -114,10 +134,10 @@ export default {
       matchbetService.createMatchScore(data).then(res => {
         this.bet = res
         Toast.clear()
-        Toast.success('竞猜成功')
         this.show = false
         this.isSaving = false
         this.$emit('save')
+        Toast.success('竞猜成功')
       })
     },
     updateScore () {
@@ -129,11 +149,14 @@ export default {
       matchbetService.updateMatchScore(data).then(res => {
         this.bet = res
         Toast.clear()
-        Toast.success('修改比分成功')
         this.show = false
         this.isSaving = false
         this.$emit('save')
+        Toast.success('修改比分成功')
       })
+    },
+    showMatchModel () {
+      this.isShowMatchModel = true
     }
   },
   mounted () {

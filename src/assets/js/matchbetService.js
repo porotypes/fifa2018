@@ -9,8 +9,7 @@ function createMatchScore (data) {
 }
 
 function updateMatchScore (data) {
-  let url = URL + '/' + data.id
-  return axiosService.patch(url, data, {guestScore: data.guestScore, hostScore: data.hostScore}).then(res => {
+  return axiosService.patch(URL, data, {guestScore: data.guestScore, hostScore: data.hostScore}).then(res => {
     return res.data
   })
 }
@@ -72,6 +71,18 @@ function getHistoryBetList (playerId) {
   })
 }
 
+function getHistoryBingoAndWinBetList (playerId) {
+  const queryParams = {
+    type: 'list-player-history-winner-and-bingo-bets',
+    params: {
+      playerId: playerId
+    }
+  }
+  return axiosService.getAll(URL, queryParams).then(res => {
+    return res.data
+  })
+}
+
 export default {
   createMatchScore,
   updateMatchScore,
@@ -79,5 +90,6 @@ export default {
   getMyListBets,
   getBingoBetList,
   getWinnerBetList,
-  getHistoryBetList
+  getHistoryBetList,
+  getHistoryBingoAndWinBetList
 }
