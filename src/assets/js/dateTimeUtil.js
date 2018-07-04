@@ -21,7 +21,41 @@ function getDateTimeString (date) {
   return `${day} ${time}`
 }
 
+function getBeginningOfDay (daysOffset) {
+  let now = new Date()
+  let beggingOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  beggingOfDay.setDate(beggingOfDay.getDate() + daysOffset)
+  return beggingOfDay
+}
+
+function getMoscowStartDateString (date) {
+  if (!date) {
+    return ''
+  }
+  if (!(date instanceof Date)) {
+    date = new Date(date)
+  }
+  let month = (date.getMonth() + 1) > 9 ? date.getMonth() + 1 : '0' + (date.getMonth() + 1)
+  let day = date.getDate() > 9 ? date.getDate() : '0' + date.getDate()
+  return `${date.getFullYear()}-${month}-${day} 05:00:00`
+}
+
+function getMoscowEndDateString (date) {
+  if (!date) {
+    return ''
+  }
+  if (!(date instanceof Date)) {
+    date = new Date(date)
+  }
+  let month = (date.getMonth() + 1) > 9 ? date.getMonth() + 1 : '0' + (date.getMonth() + 1)
+  let day = date.getDate() > 9 ? date.getDate() : '0' + date.getDate()
+  return `${date.getFullYear()}-${month}-${day} 04:59:59`
+}
+
 export default {
   getDateString,
-  getDateTimeString
+  getDateTimeString,
+  getBeginningOfDay,
+  getMoscowStartDateString,
+  getMoscowEndDateString
 }

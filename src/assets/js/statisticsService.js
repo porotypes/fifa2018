@@ -24,7 +24,21 @@ function getMatchStatistics (startTime, endTime) {
   })
 }
 
+function getAccumulatedMatchStatistics (startTime, endTime) {
+  const queryParams = {
+    type: 'match-bet-accumulated-result-trend-list',
+    params: {
+      statsAfter: startTime,
+      statsBefore: endTime
+    }
+  }
+  return axiosService.getAll(url, queryParams).then(res => {
+    return res.data
+  })
+}
+
 export default {
   getRankingListStatistics,
-  getMatchStatistics
+  getMatchStatistics,
+  getAccumulatedMatchStatistics
 }

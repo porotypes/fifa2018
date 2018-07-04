@@ -1,5 +1,13 @@
 <template>
   <div>
+    <div class="progress">
+      <p>比赛进行总进度</p>
+      <van-progress
+        color="#f3594b"
+        :pivot-text="progresstxt"
+        :percentage="progressNum"
+      />
+    </div>
     <startedMatchComponent
       v-for="match of allMatches"
       :key="match.id"
@@ -23,7 +31,9 @@ export default {
   data () {
     return {
       allMatches: [],
-      myBetList: []
+      myBetList: [],
+      progressNum: 0,
+      progresstxt: '0'
     }
   },
   methods: {
@@ -33,6 +43,8 @@ export default {
         message: '加载中...'
       })
       matchService.getStartingMatches().then(matches => {
+        this.progressNum = +(matches.length / 64 * 100).toFixed(0)
+        this.progresstxt = (matches.length / 64 * 100).toFixed(0) + '%'
         this.allMatches = matches
         this.getMyListBets()
       })
@@ -51,5 +63,10 @@ export default {
 </script>
 
 <style>
-
+.progress {
+  padding: 2rem .5rem;
+}
+.progress p {
+  margin-bottom: 1rem;
+}
 </style>

@@ -103,12 +103,63 @@
       </div>
     </van-tab>
     <van-tab :title="'图表'">
-      <div class="chart">
-        <chart ref="simpleChart" :options="totalScoreChartOptions"></chart>
-        <chart ref="simpleChart" :options="totalPointChartOptions"></chart>
-        <chart ref="simpleChart" :options="bingoCountChartOptions"></chart>
-        <chart ref="simpleChart" :options="winnerCountChartOptions"></chart>
+      <div class="filter-button">
+        <van-button
+          v-for="button of buttonTxts"
+          :key="button.id"
+          :type="button.active ? 'primary' : 'default'"
+          size="small"
+          @click="selectedDataRangeButton(button)">
+          {{ button.text }}
+        </van-button>
+        <div class="annotation">
+          <small>趋势统计以莫斯科时间为准，即北京时间凌晨5点以前开始的赛事的结果属于前一天的统计范围。</small>
+        </div>
       </div>
+      <div class="chart">
+        <chart ref="totalPointChart" :options="totalPointChartOptions" :updateCount="updateCount"></chart>
+        <chart ref="bingoCountChart" :options="bingoCountChartOptions" :updateCount="updateCount"></chart>
+        <chart ref="winnerCountChart" :options="winnerCountChartOptions" :updateCount="updateCount"></chart>
+      </div>
+
+      <van-dialog
+        v-model="isShowDateTiemDialog"
+        @confirm="searchChartDataForDate()"
+        show-cancel-button>
+        <van-field
+          v-model="selectChartStartTime"
+          disabled
+          label="由"
+          placeholder="请选择时间">
+          <van-button @click="showStartTimePicker" slot="button" size="small" type="primary">选择时间</van-button>
+        </van-field>
+        <van-field
+          v-model="selectChartEndTime"
+          disabled
+          label="到"
+          placeholder="请选择时间">
+          <van-button @click="showEndTimePicker" slot="button" size="small" type="primary">选择时间</van-button>
+        </van-field>
+      </van-dialog>
+
+      <van-popup v-model="isShowStartTimePicker" position="bottom">
+        <van-datetime-picker
+          @confirm="onSelectedStartTime($event)"
+          @cancel="isShowStartTimePicker = false"
+          v-model="selectedChartStartTime"
+          type="date"
+          :min-date="minDate"
+          :max-date="maxDate"/>
+      </van-popup>
+      <van-popup v-model="isShowEndTimePicker" position="bottom">
+        <van-datetime-picker
+          v-model="selectedChartEndTime"
+          @confirm="onSelectedEndTime($event)"
+          @cancel="isShowEndTimePicker = false"
+          type="date"
+          :min-date="minDate"
+          :max-date="maxDate"/>
+      </van-popup>
     </van-tab>
   </van-tabs>
 </template>
@@ -125,8 +176,26 @@ import updateRankingService from '@/assets/js/updateRankingService'
 import chartDataUtil from '@/assets/js/chartDataUtil'
 
 let totalPointChartOptions = {
+  plotOptions: {
+    series: {
+      events: {
+        legendItemClick: function (e) {
+          var index = this.index
+          var series = this.chart.series
+          if (index === series.length - 1) {
+            for (var i = 0; i < series.length; i++) {
+              series[i].hide()
+            }
+          }
+        }
+      }
+    }
+  },
+  credits: {
+    enabled: false
+  },
   title: {
-    text: '得分趋势图'
+    text: '总得分趋势图'
   },
   colors: [
     '#058DC7', '#50B432', '#ED561B', '#DDDF00',
@@ -148,6 +217,24 @@ let totalPointChartOptions = {
 }
 
 let bingoCountChartOptions = {
+  plotOptions: {
+    series: {
+      events: {
+        legendItemClick: function (e) {
+          var index = this.index
+          var series = this.chart.series
+          if (index === series.length - 1) {
+            for (var i = 0; i < series.length; i++) {
+              series[i].hide()
+            }
+          }
+        }
+      }
+    }
+  },
+  credits: {
+    enabled: false
+  },
   title: {
     text: 'bingo趋势图'
   },
@@ -171,6 +258,24 @@ let bingoCountChartOptions = {
 }
 
 let winnerCountChartOptions = {
+  plotOptions: {
+    series: {
+      events: {
+        legendItemClick: function (e) {
+          var index = this.index
+          var series = this.chart.series
+          if (index === series.length - 1) {
+            for (var i = 0; i < series.length; i++) {
+              series[i].hide()
+            }
+          }
+        }
+      }
+    }
+  },
+  credits: {
+    enabled: false
+  },
   title: {
     text: 'winner趋势图'
   },
@@ -193,28 +298,11 @@ let winnerCountChartOptions = {
   series: []
 }
 
-let totalScoreChartOptions = {
-  title: {
-    text: '总得分趋势图'
-  },
-  colors: [
-    '#058DC7', '#50B432', '#ED561B', '#DDDF00',
-    '#24CBE5', '#64E572', '#FF9655', '#FFF263',
-    '#6AF9C4', '#191970', '#2F4F4F', '#4169E1',
-    '#800000', '#8A2BE2', '#90EE90', '#EE82EE',
-    '#FFD700', '#EEE8AA', '#F4A460', '#DDA0DD',
-    '#B22222', '#000000', '#006400'
-  ],
-  xAxis: {
-    type: 'category'
-  },
-  yAxis: {
-    title: {
-      text: '分数'
-    }
-  },
-  series: []
-}
+const buttonTxts = [
+  { id: 1, text: '全部', active: true },
+  { id: 2, text: '最近7天', active: false },
+  { id: 3, text: '自定义', active: false }
+]
 
 export default {
   name: 'Ranking',
@@ -239,7 +327,26 @@ export default {
       totalPointChartOptions,
       bingoCountChartOptions,
       winnerCountChartOptions,
-      totalScoreChartOptions
+      buttonTxts,
+      chartStartTime: null,
+      chartEndTime: null,
+      selectedChartStartTime: null,
+      selectedChartEndTime: null,
+      selectChartStartTime: null,
+      selectChartEndTime: null,
+      updateCount: 0,
+      isShowDateTiemDialog: false,
+      isShowStartTimePicker: false,
+      isShowEndTimePicker: false,
+      minDate: new Date(2018, 5, 1),
+      maxDate: new Date(2018, 6, 31)
+    }
+  },
+  watch: {
+    tabActive (val) {
+      if (val === 1) {
+        this.getAccumulatedMatchStatistics()
+      }
     }
   },
   methods: {
@@ -322,21 +429,64 @@ export default {
         this.getRankingListUpdateDat()
       })
     },
-    getMatchStatistics () {
-      statisticsService.getMatchStatistics().then(res => {
+    getAccumulatedMatchStatistics (startTime, endTime) {
+      statisticsService.getAccumulatedMatchStatistics(startTime, endTime).then(res => {
         this.totalPointChartOptions.series = chartDataUtil.handleTotalPointData(res)
         this.bingoCountChartOptions.series = chartDataUtil.handleBingoCountData(res)
         this.winnerCountChartOptions.series = chartDataUtil.handleWinnerCountData(res)
-        this.totalScoreChartOptions.series = chartDataUtil.handleTotalScoreData(res)
-        console.log(res)
-        console.log(chartDataUtil.handleTotalScoreData(res))
+        this.updateCount++
       })
+    },
+    selectedDataRangeButton (button) {
+      this.buttonTxts.forEach(item => {
+        item.active = false
+      })
+      this.buttonTxts.forEach(item => {
+        if (button.id === item.id) {
+          item.active = true
+        }
+      })
+      this.selectedDataRange(button)
+    },
+    selectedDataRange (button) {
+      switch (button.id) {
+        case 1:
+          this.chartStartTime = null
+          this.chartEndTime = null
+          this.getAccumulatedMatchStatistics()
+          break
+        case 2:
+          let date = dateTimeUtil.getBeginningOfDay(-7)
+          this.chartStartTime = dateTimeUtil.getMoscowStartDateString(date)
+          this.getAccumulatedMatchStatistics(this.chartStartTime, null)
+          break
+        default:
+          this.isShowDateTiemDialog = true
+      }
+    },
+    showStartTimePicker () {
+      this.isShowStartTimePicker = true
+    },
+    showEndTimePicker () {
+      this.isShowEndTimePicker = true
+    },
+    onSelectedStartTime (date) {
+      this.selectChartStartTime = dateTimeUtil.getDateString(date)
+      this.isShowStartTimePicker = false
+    },
+    onSelectedEndTime (date) {
+      this.selectChartEndTime = dateTimeUtil.getDateString(date)
+      this.isShowEndTimePicker = false
+    },
+    searchChartDataForDate () {
+      let startTime = dateTimeUtil.getMoscowStartDateString(this.selectedChartStartTime)
+      let endTime = dateTimeUtil.getMoscowEndDateString(this.selectedChartEndTime) || null
+      this.getAccumulatedMatchStatistics(startTime, endTime)
     }
   },
   created () {
     this.getRankingListUpdateDat()
     this.getRankingListStatistics()
-    this.getMatchStatistics()
   },
   destroyed () {
     window.localStorage.removeItem('historyBingoBetList')
@@ -410,5 +560,17 @@ export default {
 }
 .chart {
   width: 100%;
+}
+.filter-button {
+  margin: 1rem 0;
+}
+.filter-button button {
+  margin: 0 2rem;
+}
+.filter-button .annotation {
+  padding: 1rem;
+  text-align: left;
+  text-indent: 2em;
+  font-size: 14px;
 }
 </style>

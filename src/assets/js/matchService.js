@@ -40,6 +40,12 @@ function entryMatch (data) {
   })
 }
 
+function patchMatch (match, data) {
+  return axiosService.patch(URL, match, data).then(res => {
+    return res.data
+  })
+}
+
 function saveMatchScore (matchId, data) {
   let url = URL + '/' + matchId
   return axios.patch(url, data).then(res => {
@@ -53,5 +59,6 @@ export default {
   getOneMatch,
   isbetalready,
   entryMatch,
+  patchMatch,
   saveMatchScore
 }

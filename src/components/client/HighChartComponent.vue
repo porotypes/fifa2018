@@ -12,11 +12,16 @@ HighchartsDrilldown(Highcharts)
 Highcharts3D(Highcharts)
 
 export default {
-  props: ['options', 'styles'],
-  name: 'highcharts',
+  props: ['options', 'updateCount'],
+  name: 'Highcharts',
   data () {
     return {
       chart: null
+    }
+  },
+  watch: {
+    updateCount (newVal, oldVal) {
+      this.initChart()
     }
   },
   methods: {

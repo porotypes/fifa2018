@@ -13,7 +13,8 @@
       :key="match.id"
       :match="match"
       :myBetList="myBetList"
-      v-on:save="getMyListBets()"
+      @save="getMyListBets()"
+      @getMatches="getMatches()"
       ></betComponent>
   </div>
 </template>

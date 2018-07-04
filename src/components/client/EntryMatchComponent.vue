@@ -76,6 +76,9 @@ export default {
     buttonTitle: {
       type: String,
       default: '添加比赛'
+    },
+    match: {
+      type: Object
     }
   },
   data () {
@@ -113,6 +116,15 @@ export default {
     showDialog () {
       this.getMatchTypes()
       this.getMatchTeams()
+      if (this.match) {
+        this.selectedDate = dateTimeUtil.getDateTimeString(this.match.startTime)
+        this.selectedTypeId = this.match.type.id
+        this.selectedType = this.match.type.name
+        this.selectedHostTeam = this.match.hostTeam.name
+        this.selectedHostTeamId = this.match.hostTeam.id
+        this.selectedGuestTeam = this.match.guestTeam.name
+        this.selectedGuestTeamId = this.match.guestTeam.id
+      }
       this.isShowDialog = true
     },
     openDateTimeModel () {
@@ -174,10 +186,18 @@ export default {
         'hostTeam': this.selectedHostTeamId,
         'guestTeam': this.selectedGuestTeamId
       }
-      matchService.entryMatch(match).then(res => {
-        this.isSaving = false
-        Toast.success({message: '保存成功'})
-      })
+      if (this.match) {
+        matchService.patchMatch(this.match, match).then(res => {
+          this.isSaving = false
+          this.$emit('save')
+          Toast.success({message: '修改成功'})
+        })
+      } else {
+        matchService.entryMatch(match).then(res => {
+          this.isSaving = false
+          Toast.success({message: '保存成功'})
+        })
+      }
     }
   }
 }

@@ -36,7 +36,11 @@
               </van-button>
             </van-col>
             <van-col span="12">
-              <entryMatchComponent :buttonTitle="'修改比赛'"></entryMatchComponent>
+              <entryMatchComponent
+                :buttonTitle="'修改比赛'"
+                :match="match"
+                @save="emitSave()">
+              </entryMatchComponent>
             </van-col>
           </van-row>
         </div>
@@ -157,6 +161,9 @@ export default {
     },
     showMatchModel () {
       this.isShowMatchModel = true
+    },
+    emitSave () {
+      this.$emit('getMatches')
     }
   },
   mounted () {
